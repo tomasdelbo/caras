@@ -1,6 +1,6 @@
-# DMA – TP Caras + ISOMAP
+# DMA – TP Caras + PCA
 
-Pipeline: fotos en `original/` → caras 30×30 en gris en `caras_30x30/` → comparación con ISOMAP para hallar parecidos entre personas.
+Pipeline: fotos en `original/` → recorte rostro 1200×1200 (2 ojos, escala de grises) en `caras_1200/` → redimensionar a 30×30 (900 píxeles por imagen) → **PCA** (reduce la dimensión del vector a `pc1`, `pc2`, …) → distancias (TOP 2 más cercanas o AVG).
 
 ## Setup
 
@@ -12,23 +12,30 @@ pip install -r requirements.txt
 
 ## Uso
 
-1. Colocá las fotos (una cara por imagen) en la carpeta **`original/`**. Se usa solo el nombre (primera parte antes de `_`), en minúsculas (ej. `Juan_Perez_01.jpg` → carpeta `juan/`).
+1. Colocá las fotos en la carpeta **`original/`**. Se usa solo el nombre (primera parte antes de `_`), en minúsculas (ej. `Juan_Perez_01.jpg` → persona `juan`).
 
-2. **Procesamiento** (detecta caras frontales con OpenCV y guarda 30×30 en gris en `caras_30x30/`):
+2. Ejecutá el pipeline desde la carpeta `caras/`:
    ```bash
-   python procesar.py
+   cd caras
+   python main.py
+   ```
+   - **Paso 1:** Detecta caras frontales con 2 ojos (OpenCV), recorta 1200×1200 en gris, guarda en `caras_1200/<persona>/` y escribe `temp_caras_1200.csv`.
+   - **Paso 2:** Carga las imágenes, redimensiona a 30×30 (solo achica la imagen; cada cara queda como vector de 900 valores), aplica **PCA** para comprimir a pocas componentes y guarda esos vectores en `pca_vectores.csv`.
+   - **Paso 3:** Calcula distancias y muestra resultados.
+
+3. **Opciones:**
+   - **`--modo top`** (por defecto): para cada foto muestra las **2 fotos más cercanas** (nombre + distancia).
+   - **`--modo avg`**: para cada foto muestra la **distancia promedio** al resto.
+   - **`--solo-crop`**: solo ejecuta paso 1 (recortar y escribir CSV temporal), sin PCA ni distancias.
+
+   ```bash
+   python main.py --modo avg
+   python main.py --solo-crop
    ```
 
-3. **Comparación** — hay dos scripts que leen `caras_30x30/`, construyen vectores (900 dim) y aplican ISOMAP:
+## Archivos generados (en `.gitignore`)
 
-   - **`comparar_avg.py`** — Por cada par de personas (A, B) calcula la **distancia promedio** entre todas las fotos de A y todas las de B en el espacio ISOMAP. Ordena los pares por esa distancia y muestra los 5 pares de personas más parecidos (menor score = más parecidos). No devuelve fotos concretas, solo nombres y score.
-   ```bash
-   python comparar_avg.py
-   ```
-
-   - **`comparar_top.py`** — Por cada par de personas (A, B) busca el **par de fotos** (una de A, una de B) con **menor distancia** entre sí en el espacio ISOMAP. Ordena los pares de personas por esa distancia mínima y muestra los 5 pares con la foto más cercana, imprimiendo los paths de esas dos fotos.
-   ```bash
-   python comparar_top.py
-   ```
-
-Resumen: `comparar_avg` usa promedios entre todas las fotos de cada persona; `comparar_top` usa la pareja de fotos más cercana entre dos personas y muestra sus paths.
+- `caras_1200/` — recortes 1200×1200 en gris por persona.
+- `temp_caras_1200.csv` — lista (persona, path) para no cargar todo en memoria.
+- `pca_vectores.csv` — salida del PCA: persona, path y coeficientes `pc1`, `pc2`, … (no son los 900 píxeles del 30×30).
+- `convertidos/` — cache de HEIC convertidos a JPEG.

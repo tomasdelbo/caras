@@ -39,5 +39,11 @@ env/
 # Ignorar contenido, mantener carpetas
 original/*
 !original/.gitkeep
-caras_30x30/*
-!caras_30x30/.gitkeep
+
+# Carpetas y CSV generados por el pipeline
+caras_1200/
+caras_1600/
+caras_900/
+convertidos/
+temp_caras_*.csv
+pca_vectores.csv
