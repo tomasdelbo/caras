@@ -37,5 +37,5 @@ pip install -r requirements.txt
 
 - `caras_1200/` — recortes 1200×1200 en gris por persona.
 - `temp_caras_1200.csv` — lista (persona, path) para no cargar todo en memoria.
-- `pca_vectores.csv` — salida del PCA: persona, path y coeficientes `pc1`, `pc2`, … (no son los 900 píxeles del 30×30).
+- `pca_vectores.csv` — vectores PCA (persona, path, pc1, pc2, …).
 - `convertidos/` — cache de HEIC convertidos a JPEG.
