@@ -36,14 +36,11 @@ env/
 .env
 .env.local
 
-# Ignorar contenido, mantener carpetas
-original/*
-!original/.gitkeep
-
 # Carpetas y CSV generados por el pipeline
 caras_1200/
-caras_1600/
-caras_900/
-convertidos/
+isomap/
 temp_caras_*.csv
-pca_vectores.csv
+
+# Fotos crudas: muy pesadas, se descargan aparte (ver README)
+original/*
+!original/.gitkeep
