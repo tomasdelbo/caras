@@ -38,8 +38,11 @@ env/
 
 # Carpetas y CSV generados por el pipeline
 caras_1200/
-isomap/
 temp_caras_*.csv
+
+# isomap/: trackeamos la carpeta pero no su contenido generado
+isomap/*
+!isomap/.gitkeep
 
 # Fotos crudas: muy pesadas, se descargan aparte (ver README)
 original/*
